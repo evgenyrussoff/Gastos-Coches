@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0a101f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Mis Coches">
+  <meta name="description" content="Control personal de gastos de tres coches.">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="apple-touch-icon" href="./assets/icon-192.png">
+  <link rel="stylesheet" href="./styles.css">
+  <title>Mis Coches · Gastos</title>
+</head>
+<body>
+  <div id="app">
+    <header class="topbar">
+      <div>
+        <div class="eyebrow">CONTROL PERSONAL</div>
+        <h1 id="pageTitle">Mis coches</h1>
+      </div>
+      <button class="icon-button" id="homeButton" aria-label="Inicio" hidden>⌂</button>
+    </header>
+
+    <main id="mainContent"></main>
+
+    <nav class="bottom-nav" aria-label="Navegación principal">
+      <button class="nav-item active" data-route="home"><span>⌂</span><small>Inicio</small></button>
+      <button class="nav-item" data-route="stats"><span>◒</span><small>General</small></button>
+    </nav>
+  </div>
+
+  <div class="modal-backdrop" id="expenseModal" hidden>
+    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-head">
+        <div>
+          <div class="eyebrow">NUEVO REGISTRO</div>
+          <h2 id="modalTitle">Añadir gasto</h2>
+        </div>
+        <button class="icon-button" id="closeModal" aria-label="Cerrar">×</button>
+      </div>
+
+      <form id="expenseForm">
+        <input type="hidden" id="expenseId">
+        <label>Fecha
+          <input type="date" id="expenseDate" required>
+        </label>
+        <label>Importe (€)
+          <input type="number" id="expenseAmount" min="0" step="0.01" inputmode="decimal" placeholder="0,00" required>
+        </label>
+        <label>Kilometraje (km)
+          <input type="number" id="expenseMileage" min="0" step="1" inputmode="numeric" placeholder="Ej. 125000" required>
+        </label>
+        <label>Categoría
+          <select id="expenseCategory" required>
+            <option value="Mantenimiento">Mantenimiento</option>
+            <option value="Neumáticos">Neumáticos</option>
+            <option value="Seguro">Seguro</option>
+            <option value="ITV">ITV</option>
+            <option value="Impuestos">Impuestos</option>
+            <option value="Otros gastos">Otros gastos</option>
+          </select>
+        </label>
+        <label>Concepto
+          <input type="text" id="expenseConcept" maxlength="80" placeholder="Ej. Revisión anual">
+        </label>
+        <label>Notas
+          <textarea id="expenseNotes" maxlength="300" rows="3" placeholder="Opcional"></textarea>
+        </label>
+        <button class="primary-button" type="submit">Guardar gasto</button>
+      </form>
+    </section>
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>
