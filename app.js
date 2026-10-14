@@ -31,6 +31,7 @@ const STORAGE_KEY = "mis-coches-gastos-v1";
 const state = {
   route: "home",
   carId: null,
+  routeStack: [],
   expenses: loadExpenses()
 };
 
@@ -79,15 +80,23 @@ function setTitle(title){
   $("#pageTitle").textContent = title;
   $("#homeButton").hidden = state.route === "home";
 }
-function navigate(route, carId=null){
+function navigate(route, carId=null, remember=true){
+  if(remember && (route!==state.route || carId!==state.carId)) state.routeStack.push({route:state.route,carId:state.carId});
   state.route=route; state.carId=carId;
   render();
   window.scrollTo({top:0,behavior:"smooth"});
+}
+function goBack(){
+  const previous=state.routeStack.pop();
+  if(previous) navigate(previous.route,previous.carId,false);
+  else if(state.route!="home") navigate("home",null,false);
+  else return;
 }
 function render(){
   document.querySelectorAll(".nav-item").forEach(b=>b.classList.toggle("active", b.dataset.route===state.route && state.route!=="car"));
   if(state.route==="home"){ setTitle("Mis coches"); renderHome(); }
   else if(state.route==="stats"){ setTitle("Estadística general"); renderGeneral(); }
+  else if(state.route==="settings"){ setTitle("Ajustes"); renderSettings(); }
   else { setTitle(CARS[state.carId].name); renderCar(state.carId); }
 }
 function carLogo(car){
@@ -112,9 +121,8 @@ function renderHome(){
     <section class="car-grid">
       ${Object.values(CARS).map(car=>`
         <button class="car-card ${car.logo?'':'placeholder'}" data-open-car="${car.id}">
-          <div class="card-bg" style="${car.background?`background-image:url('${car.background}')`:''}"></div>
+          <div class="card-bg" style="${car.background?`background-image:url('${car.background}');${car.id==='glb'?'background-position:78% 68%;':''}`:''}"></div>
           <div class="card-content">
-            ${car.logo ? carLogo(car) : carLogo(car)}
             <h2>${car.name}</h2>
             <div class="small">${car.model}</div>
             <div class="small">${money(total(car.id))} registrados</div>
@@ -136,7 +144,7 @@ function renderCar(carId){
   const catTotals=Object.fromEntries(CATEGORIES.map(c=>[c,list.filter(e=>e.category===c).reduce((s,e)=>s+Number(e.amount||0),0)]));
   $("#mainContent").innerHTML=`
     <section class="detail-hero">
-      <div class="detail-bg" style="${car.background?`background-image:url('${car.background}')`:''};${!car.background?'background:linear-gradient(135deg,#17233b,#070b14)':''}"></div>
+      <div class="detail-bg" style="${car.background?`background-image:url('${car.background}');${car.id==='glb'?'background-position:78% 68%;':''}`:''};${!car.background?'background:linear-gradient(135deg,#17233b,#070b14)':''}"></div>
       <div class="detail-info">
         <div><div class="eyebrow">${car.model}</div><h2>${car.name}</h2><p>${list.length} ${list.length===1?'registro':'registros'}</p></div>
         <div class="detail-actions"><button class="primary-button" id="addExpense">+ Gasto</button></div>
@@ -193,12 +201,85 @@ function renderGeneral(){
     <section class="home-section"><div class="section-head"><div><div class="eyebrow">POR COCHE</div><h3>Comparativa</h3></div></div>
       <div class="general-grid">${all.map(x=>`
         <button class="general-car" data-open-car="${x.car.id}">
-          ${carLogo(x.car)}
-          <h3>${x.car.name}</h3><p>${money(x.total)} · ${x.list.length} ${x.list.length===1?'registro':'registros'}</p>
+          <span class="general-car-logo">${carLogo(x.car)}</span>
+          <span class="general-car-info"><strong>${x.car.name}</strong><b>${money(x.total)}</b><small>${x.list.length} ${x.list.length===1?'registro':'registros'}</small></span>
         </button>`).join("")}</div>
     </section>`;
   document.querySelectorAll("[data-open-car]").forEach(b=>b.onclick=()=>navigate("car",b.dataset.openCar));
 }
+function renderSettings(){
+  const totalRecords=Object.values(state.expenses).reduce((n,items)=>n+(Array.isArray(items)?items.length:0),0);
+  $('#mainContent').innerHTML=`
+    <section class="hero-intro"><div class="eyebrow">DATOS Y HERRAMIENTAS</div><h2>Copias e informes</h2><p>Guarda una copia de tus registros o genera un informe para enviarlo por correo. Los datos se guardan en este dispositivo.</p></section>
+    <section class="settings-card">
+      <div class="settings-icon">⇩</div><div class="settings-copy"><h3>Copia de seguridad</h3><p>Exporta todos los coches, gastos, fechas, categorías, notas y kilometrajes en un archivo JSON.</p></div>
+      <button class="primary-button" id="exportBackup">Exportar copia</button>
+    </section>
+    <section class="settings-card">
+      <div class="settings-icon">⇧</div><div class="settings-copy"><h3>Importar copia</h3><p>Recupera una copia JSON exportada previamente. La importación sustituirá los registros actuales.</p></div>
+      <label class="file-button">Elegir archivo<input type="file" id="importBackupFile" accept=".json,application/json" hidden></label>
+    </section>
+    <section class="settings-card report-card">
+      <div class="settings-icon">✉</div><div class="settings-copy"><h3>Informe por correo</h3><p>Elige un coche o prepara un informe conjunto. Podrás compartir el archivo desde el menú del iPhone o abrir tu aplicación de correo.</p></div>
+      <label>Tipo de informe<select id="reportScope"><option value="all">Todos los coches</option>${Object.values(CARS).map(c=>`<option value="${c.id}">${c.name}</option>`).join('')}</select></label>
+      <button class="primary-button" id="makeReport">Preparar informe</button>
+    </section>
+    <p class="settings-footnote">Registros guardados en este dispositivo: <strong>${totalRecords}</strong>. La copia de seguridad no incluye las fotos de los coches ni se guarda automáticamente en la nube.</p>`;
+  $('#exportBackup').onclick=exportBackup;
+  $('#importBackupFile').onchange=importBackup;
+  $('#makeReport').onclick=makeReport;
+}
+function downloadBlob(blob,filename){
+  const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=filename; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),1500);
+}
+function exportBackup(){
+  const payload={app:'Mis Coches · Gastos',formatVersion:1,exportedAt:new Date().toISOString(),cars:Object.keys(CARS),expenses:state.expenses};
+  downloadBlob(new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),`copia-mis-coches-${new Date().toISOString().slice(0,10)}.json`);
+  toast('Copia de seguridad preparada');
+}
+async function importBackup(event){
+  const file=event.target.files?.[0]; if(!file)return;
+  try{
+    const parsed=JSON.parse(await file.text());
+    const incoming=parsed?.expenses;
+    if(!incoming || typeof incoming!=='object' || Array.isArray(incoming)) throw new Error('Formato incorrecto');
+    const clean={};
+    for(const carId of Object.keys(CARS)){
+      const records=incoming[carId]??[];
+      if(!Array.isArray(records)) throw new Error('La lista de registros no es válida');
+      clean[carId]=records.map(e=>{
+        if(!e || typeof e!=='object' || !e.date || !Number.isFinite(Number(e.amount))) throw new Error('Hay un registro no válido');
+        return {id:String(e.id||id()),date:String(e.date),amount:Number(e.amount),mileage:e.mileage===''||e.mileage==null?'':Number(e.mileage),category:CATEGORIES.includes(e.category)?e.category:'Otros gastos',concept:String(e.concept||''),notes:String(e.notes||'')};
+      });
+    }
+    if(!confirm('La importación sustituirá todos los registros actuales. ¿Has guardado una copia de seguridad y quieres continuar?')) return;
+    state.expenses=clean; saveExpenses(); render(); toast('Copia importada correctamente');
+  }catch(err){alert('No se pudo importar la copia. Comprueba que sea un archivo JSON de Mis Coches.');}
+  finally{event.target.value='';}
+}
+function reportText(scope){
+  const selected=scope==='all'?Object.values(CARS):[CARS[scope]];
+  const lines=['INFORME DE GASTOS · MIS COCHES',`Generado: ${new Date().toLocaleDateString('es-ES')}`,''];
+  for(const car of selected){
+    const list=expenses(car.id); lines.push(`${car.name} — Total: ${money(total(car.id))} — ${list.length} registros`,'Fecha;Kilometraje (km);Categoría;Concepto;Importe (€);Notas');
+    for(const e of [...list].reverse()) lines.push([e.date,e.mileage??'',e.category,e.concept||'',Number(e.amount||0).toFixed(2).replace('.',','),e.notes||''].map(v=>`"${String(v).replace(/"/g,'""')}"`).join(';'));
+    lines.push('');
+  }
+  return lines.join('\r\n');
+}
+async function makeReport(){
+  const scope=$('#reportScope').value; const report=reportText(scope); const carName=scope==='all'?'todos-los-coches':CARS[scope].name.toLowerCase().replace(/\s+/g,'-');
+  const file=new File(['\ufeff'+report],`informe-gastos-${carName}-${new Date().toISOString().slice(0,10)}.csv`,{type:'text/csv;charset=utf-8'});
+  const subject=encodeURIComponent(`Informe de gastos · ${scope==='all'?'Todos los coches':CARS[scope].name}`);
+  const body=encodeURIComponent('Adjunto/preparo el informe de gastos de Mis Coches.\n\nSi el archivo no aparece adjunto, comparte el CSV descargado desde Archivos o desde la hoja de compartir del iPhone.');
+  if(navigator.canShare && navigator.canShare({files:[file]}) && navigator.share){
+    try{await navigator.share({files:[file],title:'Informe de gastos'});return;}catch(err){if(err?.name==='AbortError')return;}
+  }
+  downloadBlob(file,file.name);
+  window.location.href=`mailto:?subject=${subject}&body=${body}`;
+  toast('Informe descargado; adjúntalo al correo si no aparece');
+}
+
 function openExpenseModal(carId, editId=null){
   $("#expenseModal").hidden=false;
   $("#expenseId").value=editId||"";
@@ -259,8 +340,22 @@ $("#expenseForm").addEventListener("submit",e=>{
 });
 $("#closeModal").onclick=closeModal;
 $("#expenseModal").addEventListener("click",e=>{if(e.target.id==="expenseModal")closeModal()});
-$("#homeButton").onclick=()=>navigate("home");
+$("#homeButton").onclick=goBack;
 document.querySelectorAll(".nav-item").forEach(b=>b.onclick=()=>navigate(b.dataset.route));
+
+// Gesto de volver: deslizar desde el borde izquierdo hacia la derecha.
+let edgeStart=null;
+document.addEventListener('touchstart',e=>{
+  if(!$('#expenseModal').hidden || e.touches.length!==1)return;
+  const t=e.touches[0]; edgeStart=t.clientX<=24?{x:t.clientX,y:t.clientY}:null;
+},{passive:true});
+document.addEventListener('touchend',e=>{
+  if(!edgeStart)return;
+  const t=e.changedTouches[0],dx=t.clientX-edgeStart.x,dy=t.clientY-edgeStart.y;
+  if(dx>75 && Math.abs(dy)<70) goBack();
+  edgeStart=null;
+},{passive:true});
+window.addEventListener('keydown',e=>{if(e.key==='Escape'){if(!$('#expenseModal').hidden)closeModal();else goBack();}});
 
 render();
 

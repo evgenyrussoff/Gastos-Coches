@@ -1,4 +1,4 @@
-const CACHE = "mis-coches-gastos-v2";
+const CACHE = "mis-coches-gastos-v3";
 const ASSETS = [
   "./",
   "./index.html",
@@ -7,6 +7,7 @@ const ASSETS = [
   "./manifest.webmanifest",
   "./assets/icon-192.png",
   "./assets/icon-512.png",
+  "./assets/logo_app.png",
   "./assets/c_fondo.jpeg",
   "./assets/c_logo.jpg",
   "./assets/glb_fondo.jpeg",

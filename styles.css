@@ -21,18 +21,18 @@ button{cursor:pointer}
 #app{min-height:100vh;background:
   radial-gradient(circle at 20% -10%,rgba(232,183,93,.08),transparent 34rem),
   radial-gradient(circle at 100% 20%,rgba(56,90,150,.11),transparent 28rem)}
-.topbar{height:88px;padding:calc(18px + env(safe-area-inset-top)) 18px 14px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:20;background:rgba(7,11,20,.82);backdrop-filter:blur(18px);border-bottom:1px solid var(--line)}
+.topbar{min-height:96px;height:auto;padding:calc(27px + env(safe-area-inset-top)) 18px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:20;background:rgba(7,11,20,.92);backdrop-filter:blur(18px);border-bottom:1px solid var(--line)}
 .eyebrow{font-size:10px;letter-spacing:.18em;color:var(--accent);font-weight:800}
 h1,h2,h3,p{margin:0}
 h1{font-size:25px;margin-top:3px;letter-spacing:-.03em}
 h2{font-size:23px;letter-spacing:-.03em}
 h3{font-size:15px}
-main{max-width:900px;margin:0 auto;padding:18px 16px 110px}
+main{max-width:900px;margin:0 auto;padding:22px 16px 110px}
 .icon-button{width:42px;height:42px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--text);font-size:22px}
-.hero-intro{padding:12px 2px 22px}
+.hero-intro{padding:18px 2px 24px}
 .hero-intro p{color:var(--muted);margin-top:7px;font-size:14px;line-height:1.5}
 .car-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
-.car-card{min-height:255px;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;position:relative;background:#111827;box-shadow:var(--shadow);text-align:left;padding:0;color:var(--text)}
+.car-card{min-height:225px;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;position:relative;background:#111827;box-shadow:var(--shadow);text-align:left;padding:0;color:var(--text)}
 .car-card::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.03) 20%,rgba(0,0,0,.82) 100%);pointer-events:none}
 .car-card .card-bg{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform .5s}
 .car-card:hover .card-bg{transform:scale(1.035)}
@@ -55,8 +55,8 @@ main{max-width:900px;margin:0 auto;padding:18px 16px 110px}
 .nav-item span{font-size:21px;line-height:1}
 .nav-item small{font-size:10px;font-weight:700}
 .nav-item.active{color:var(--accent2)}
-.detail-hero{height:310px;border-radius:28px;overflow:hidden;position:relative;border:1px solid var(--line);box-shadow:var(--shadow);background:#101727}
-.detail-bg{position:absolute;inset:0;background-size:cover;background-position:center 55%;filter:saturate(.9)}
+.detail-hero{height:300px;border-radius:28px;overflow:hidden;position:relative;border:1px solid var(--line);box-shadow:var(--shadow);background:#101727}
+.detail-bg{position:absolute;inset:0;background-size:cover;background-position:center 58%;filter:saturate(.9)}
 .detail-hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(5,8,15,.05),rgba(5,8,15,.92) 88%)}
 .detail-info{position:absolute;z-index:2;left:18px;right:18px;bottom:18px;display:flex;justify-content:space-between;align-items:end}
 .detail-info h2{font-size:29px}
@@ -87,7 +87,14 @@ main{max-width:900px;margin:0 auto;padding:18px 16px 110px}
 .bar-fill{height:100%;border-radius:20px;background:linear-gradient(90deg,var(--accent),#f6d99a)}
 .bar-value{font-size:11px;font-weight:800;text-align:right}
 .general-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.general-car{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:14px;min-height:135px}
+.general-car{width:100%;display:flex;align-items:center;gap:14px;text-align:left;background:#000;border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:12px 14px;min-height:112px;color:var(--text)}
+.general-car-logo{display:flex;align-items:center;justify-content:flex-start;flex:0 0 43%;min-width:0}
+.general-car .car-logo{width:100%;height:82px;object-position:left center;object-fit:contain;margin:0;filter:none}
+.general-car .placeholder-logo{height:72px}
+.general-car-info{display:flex;flex:1;min-width:0;flex-direction:column;align-items:flex-start;gap:6px}
+.general-car-info strong{font-size:14px}
+.general-car-info b{font-size:16px;color:var(--accent2);overflow-wrap:anywhere}
+.general-car-info small{font-size:11px;color:var(--muted)}
 .general-car img{width:100%;height:75px;object-fit:contain}
 .general-car h3{margin-top:2px}
 .general-car p{color:var(--muted);font-size:11px;margin-top:4px}
@@ -103,10 +110,26 @@ textarea{resize:vertical}
 .toast{position:fixed;z-index:200;left:50%;bottom:92px;transform:translateX(-50%);background:#eef2f8;color:#111827;padding:11px 14px;border-radius:13px;font-size:12px;font-weight:800;box-shadow:var(--shadow)}
 @media(max-width:650px){
   .car-grid{grid-template-columns:1fr}
-  .car-card{min-height:285px}
+  .car-card{min-height:235px}
   .general-grid{grid-template-columns:1fr}
+  .general-car{min-height:100px}
+  .general-car-logo{flex-basis:40%}
+  .general-car .car-logo{height:74px}
+  .topbar{padding-left:16px;padding-right:16px}
 }
 @media(min-width:700px){
   .modal-backdrop{align-items:center}
   .modal{border:1px solid var(--line);border-radius:28px}
 }
+
+.settings-card{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:12px 0;padding:18px;background:var(--panel);border:1px solid var(--line);border-radius:20px}
+.settings-icon{width:42px;height:42px;flex:0 0 42px;display:grid;place-items:center;border-radius:14px;background:rgba(232,183,93,.12);color:var(--accent2);font-size:24px}
+.settings-copy{flex:1;min-width:180px}
+.settings-copy h3{font-size:15px}
+.settings-copy p{font-size:12px;line-height:1.5;color:var(--muted);margin-top:5px}
+.settings-card>.primary-button,.settings-card>.file-button{margin-left:auto}
+.file-button{display:inline-flex;align-items:center;justify-content:center;background:rgba(255,255,255,.07);border:1px solid var(--line);border-radius:14px;padding:12px 15px;color:var(--text);font-size:12px;font-weight:800;cursor:pointer}
+.report-card label{width:100%;max-width:360px}
+.settings-footnote{font-size:11px;color:var(--muted);line-height:1.6;padding:10px 2px}
+.settings-footnote strong{color:var(--text)}
+@media(max-width:460px){.settings-card>.primary-button,.settings-card>.file-button{width:100%;margin-left:56px}.settings-card{gap:12px}.settings-copy{min-width:calc(100% - 60px)}}

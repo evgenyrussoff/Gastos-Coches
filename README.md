@@ -1,67 +1,53 @@
 # Mis Coches · PWA
 
-PWA sencilla para iPhone para controlar los gastos de 3 coches por separado:
+PWA en español para iPhone para controlar los gastos de tres coches por separado:
 
 - Mercedes-Benz Serie C
 - Mercedes-Benz GLB
 - Ford Fiesta (apartado preparado para añadir las fotos más adelante)
 
-## Categorías
+## Categorías y funciones
 
-La aplicación NO registra combustible ni calcula consumos.
+La aplicación **no registra combustible ni calcula consumos**.
 
-Categorías actuales:
+Categorías: Mantenimiento, Neumáticos, Seguro, ITV, Impuestos y Otros gastos.
 
-1. Mantenimiento
-2. Neumáticos
-3. Seguro
-4. ITV
-5. Impuestos
-6. Otros gastos
+Cada registro incluye fecha, importe, kilometraje, categoría, concepto y notas. Cada coche muestra el total acumulado, número de registros, importe medio, kilometraje más alto registrado, intervalo entre los dos últimos registros de neumáticos y de mantenimiento, distribución por categoría e historial.
 
-Cada coche tiene:
-- Total acumulado
-- Número de registros
-- Importe medio por registro
-- Kilometraje de cada registro
-- Kilometraje actual
-- Intervalo entre los dos últimos registros de neumáticos
-- Intervalo entre los dos últimos registros de mantenimiento
-- Distribución por categoría
-- Historial de gastos
-- Añadir / editar / borrar gastos
+La pantalla **General** compara los gastos de los tres coches.
 
-La pantalla "General" reúne los 3 coches.
+## Ajustes, copias e informes
+
+- **Exportar copia:** descarga un archivo JSON con los registros de todos los coches.
+- **Importar copia:** permite recuperar un archivo JSON exportado por la aplicación. La importación sustituye los registros que haya actualmente; por seguridad, confirma la operación antes de aplicarla.
+- **Informe por correo:** permite preparar un CSV de un coche o de todos. En iPhone, si el sistema ofrece compartir archivos, se abre la hoja de compartir para elegir Mail u otra aplicación. En navegadores sin compartir archivos, se descarga el CSV y se abre el borrador de correo; puede ser necesario adjuntar el CSV manualmente.
+
+Las copias y los informes contienen información de los gastos y kilometrajes. Guárdalos en un lugar seguro.
 
 ## Datos
 
-Los gastos se guardan localmente en `localStorage` del navegador/dispositivo. Esta primera versión no necesita base de datos ni cuenta de usuario. El kilometraje se guarda junto a cada gasto para poder medir la duración entre operaciones.
+Los registros se guardan en `localStorage` del navegador/dispositivo. No hay servidor ni sincronización automática. Exporta copias periódicamente y antes de importar otra copia o borrar los datos de Safari.
 
-**Importante:** si borras los datos del navegador o cambias de dispositivo, los registros locales pueden perderse. Más adelante podemos añadir sincronización/backup.
+## Publicar en GitHub Pages
 
-## Subir a GitHub
+1. Sube el contenido de esta carpeta al directorio raíz del repositorio.
+2. En GitHub abre **Settings → Pages**.
+3. Selecciona **Deploy from a branch**, elige `main` y `/ (root)`.
+4. Guarda y espera a que GitHub publique la página.
 
-1. Crea un repositorio nuevo en GitHub.
-2. Sube todo el contenido de esta carpeta manteniendo la estructura.
-3. En GitHub entra en **Settings → Pages**.
-4. Selecciona **Deploy from a branch**, elige `main` y `/ (root)`.
-5. Guarda y espera a que GitHub publique la página.
-
-La aplicación usa rutas relativas (`./`), por lo que funciona también cuando GitHub Pages la publica dentro de `https://usuario.github.io/nombre-del-repositorio/`.
+La aplicación usa rutas relativas (`./`) y funciona también si GitHub Pages publica bajo la ruta del repositorio.
 
 ## Instalar en iPhone
 
-Abre la URL publicada con Safari y usa:
+Abre la URL publicada con Safari y selecciona **Compartir → Añadir a pantalla de inicio**. El icono de la aplicación usa `assets/logo_app.png`.
 
-**Compartir → Añadir a pantalla de inicio → Abrir como app web**
+## Versión 0.4.0
 
-## Próximas mejoras posibles
-
-- Filtro por año/mes.
-- Gráficos mensuales.
-- Adjuntar foto de factura.
-- Exportar/importar los gastos en CSV/JSON.
-- Copia de seguridad.
-- Sincronización entre dispositivos.
-- Recordatorios de ITV, seguro y mantenimiento.
-- Añadir las imágenes definitivas del Ford Fiesta.
+- Nuevo icono de la aplicación proporcionado por el usuario.
+- Ajuste de espaciado superior en las pantallas.
+- Tarjetas de la pantalla principal sin logos superpuestos y con fotos algo más compactas.
+- Nuevo encuadre del fondo del GLB, orientado a la parte derecha y algo más abajo.
+- Gesto de deslizar desde el borde izquierdo hacia la derecha para volver.
+- Ajustes para exportar/importar copia de seguridad y preparar informes CSV por coche o globales.
+- Tarjetas de General con fondo negro, logo a la izquierda y gasto total a la derecha.
+- Se mantienen los datos locales y las categorías existentes; no se añaden gastos de combustible.
